@@ -6,7 +6,8 @@ QT += quick
 
 SOURCES += \
         areachart.cpp \
-        main.cpp
+        main.cpp \
+        randompointsgenerator.cpp
 
 RESOURCES += qml.qrc
 
@@ -22,4 +23,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    areachart.h
+    areachart.h \
+    randompointsgenerator.h
+include(./QtSuperMacros-master/QtSuperMacros.pri)

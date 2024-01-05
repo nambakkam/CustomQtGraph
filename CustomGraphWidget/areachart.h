@@ -3,23 +3,29 @@
 
 #include <QtQuick/QQuickPaintedItem>
 #include <QObject>
+#include <QQmlVarPropertyHelpers.h>
+#include <QVector>
+#include "randompointsgenerator.h"
 
 class AreaChart : public QQuickPaintedItem
 {
     Q_OBJECT
-    Q_PROPERTY(qreal chdata READ chdata WRITE setchdata NOTIFY chdataChanged)
+    QML_WRITABLE_VAR_PROPERTY(qreal, graphWidth)
+    QML_WRITABLE_VAR_PROPERTY(qreal, graphHeight)
+    QML_WRITABLE_VAR_PROPERTY(qreal,scale)
+
+
 
 public:
     AreaChart(QQuickItem *parent = 0);
 
-    qreal chdata() const;
-    void setchdata(const qreal &chdata);
-
     void paint(QPainter *painter);
-signals:
-    void chdataChanged();
+
+public slots:
+    void drawGrid(QPainter *painter);
 private:
-    qreal m_chdata;
+    RandomPointsGenerator generator;
+    void drawMinorGrid(QPainter *painter);
 };
 
 #endif // AREACHART_H

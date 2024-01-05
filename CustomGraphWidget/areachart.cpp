@@ -3,54 +3,79 @@
 #include <QPainterPath>
 using namespace std;
 
-vector<int> xpos({0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160,165,170,175,180,185,190,195});
-vector<int> ypos({140,150,140,170,160,160,170,190,220,140,150,150,190,170,160,180,160,150,170,180,140,150,130,170,140,150,170,190,180,160,150,150,190,150,170,180,160,150,170,200});
-
-#define X_SHIFT  20
-#define X_AXIS_YCOR 200
-
 AreaChart::AreaChart(QQuickItem *parent): QQuickPaintedItem(parent)
 {
-    m_chdata = 0;
+    QObject::connect(&generator,&RandomPointsGenerator::pointsAdded,[this]{
+        QRect wholeRect;
+        wholeRect.setRect(0,0,m_graphHeight,m_graphWidth);
+        this->update(wholeRect);
+    });
 }
 
-qreal AreaChart::chdata() const
-{
-    return m_chdata;
-}
 
-void AreaChart::setchdata(const qreal &chdata)
-{
-    if(chdata != m_chdata)
-    {
-        m_chdata = chdata;
-        update();
-        emit chdataChanged();
-    }
-
-}
 
 void AreaChart::paint(QPainter *painter)
 {
-    std::rotate(ypos.begin(),ypos.begin()+1,ypos.end()-1); /*Rotating the plot points everytime when update() is called.*/
+    // Round the m_graphWidth and m_graphHeight to nearest 20 multiple
+    m_graphHeight = static_cast<int>(m_graphHeight/20)*20;
+    m_graphWidth =  static_cast<int>(m_graphWidth/20)*20;
 
-    QPainterPath areapath;
+    QLineF yAxis(0,0,0,m_graphHeight);
+    QLineF xAxis(0,m_graphHeight,m_graphWidth,m_graphHeight);
 
-    /* Area chart path*/
-    areapath.setFillRule(Qt::OddEvenFill);
-    areapath.moveTo(X_SHIFT, X_AXIS_YCOR);	 /*Move to the bottom of the rectangle to start plotting. In qml, chart window is 200,200*/
-    for(int i=0; i < xpos.size(); i++)
+    drawGrid(painter);
+//    drawMinorGrid(painter);
+    painter->setPen(QPen(QColor("black"), 2, Qt::SolidLine));
+    painter->setBrush(QColor("transparent"));
+    painter->drawLine(yAxis);
+    painter->drawLine(xAxis);
+
+
+    for(int i=0; i < generator.points.size(); i++)
     {
-        areapath.lineTo(xpos.at(i)+X_SHIFT,ypos.at(i));
+        if(i>0){
+        painter->setPen(QPen(QColor("red"), 2, Qt::SolidLine));
+        painter->setBrush(QColor("transparent"));
+        painter->drawLine((generator.points.at(i).x())/400*m_graphWidth,m_graphHeight-generator.points.at(i).y()/240*m_graphHeight,(generator.points.at(i-1).x())/400*m_graphWidth,m_graphHeight-generator.points.at(i-1).y()/240*m_graphHeight);
+        }
+//        painter->setPen(QPen(QColor("blue"), 7.5, Qt::SolidLine));
+//        painter->setBrush(QColor("blue"));
+//        qreal xScaled = (generator.points.at(i).x())/400*m_graphWidth;
+//        qreal yScaled = m_graphHeight-generator.points.at(i).y()/240*m_graphHeight;
+//        painter->drawPoint(QPointF(xScaled,yScaled));
+    }
+}
+void AreaChart::drawGrid(QPainter *painter)
+{
+    QRectF gridRect;
+
+    painter->setPen(QPen(QColor("lightgray"), 2, Qt::SolidLine));
+    painter->setBrush(QColor("transparent"));
+
+    for(int i= 0; i < m_graphWidth; i += (m_graphWidth)/20)
+    {
+        for(int j=0; j< m_graphHeight; j += (m_graphHeight)/20){
+            gridRect.setRect(i,j,m_graphWidth/20,m_graphHeight/20);
+            painter->drawRect(gridRect);
+        }
     }
 
-    /* Painting areachart path*/
-    painter->setRenderHints(QPainter::Antialiasing, true);
-    painter->setPen(QPen(QColor("pink"), 2, Qt::SolidLine,
-                        Qt::RoundCap, Qt::RoundJoin));
-    painter->setBrush(QColor("red"));
-    painter->setOpacity(0.5);
-    painter->drawPath(areapath);
 }
+void AreaChart::drawMinorGrid(QPainter *painter)
+{
+    QRectF gridRect;
 
+    painter->setPen(QPen(QColor("lightgray"), 2, Qt::SolidLine));
+    painter->setBrush(QColor("transparent"));
+
+    for(int i= 0; i < m_graphWidth; i += (m_graphHeight+m_graphWidth)/100)
+    {
+        for(int j=0; j< m_graphHeight; j += (m_graphHeight+m_graphWidth)/100){
+            qreal dimension = (m_graphHeight+m_graphWidth)/2;
+            gridRect.setRect(i,j,dimension/50,dimension/50);
+            painter->drawRect(gridRect);
+        }
+    }
+
+}
 
