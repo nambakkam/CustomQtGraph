@@ -6,29 +6,12 @@ Rectangle{
     anchors.fill: parent
     color:"beige"
 
-    AreaChart{
-    id: chrt_areachart
+    Linechart{
+    id: chrt_Linechart
     anchors.centerIn: parent
     width:parent.width*0.5
     height:parent.height*0.5
-    Component.onCompleted: {
-        chrt_areachart.set_graphHeight(height)
-        chrt_areachart.set_graphWidth(width)
-        chrt_areachart.update()
-
-    }
-
-    onWidthChanged: {
-        chrt_areachart.set_graphHeight(height)
-        chrt_areachart.set_graphWidth(width)
-        chrt_areachart.update()
-    }
-    onHeightChanged: {
-        chrt_areachart.set_graphHeight(height)
-        chrt_areachart.set_graphWidth(width)
-        chrt_areachart.update()
-    }
-
+    clip: false
     }
 
 }
