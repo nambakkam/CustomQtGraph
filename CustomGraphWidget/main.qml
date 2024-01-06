@@ -1,19 +1,18 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
 import Charts 1.0
+import QtQuick.Controls 2.0
 
-Window {
+ApplicationWindow {
     visible: true
     width: 800
     height: 480
     title: qsTr("Charts")
-    color: "black"
+    color: "white"
 
-    AreaChart{
-        id: chrt_areachart
-        x:200
-        y:140
-        width: 220
-        height: 230
+    CustomGraph{
+        id:graph
+        anchors.centerIn: parent
     }
+
 }
