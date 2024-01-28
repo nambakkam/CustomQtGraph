@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>CustomGraph.qml</file>
+        <file>Axes.qml</file>
     </qresource>
 </RCC>
