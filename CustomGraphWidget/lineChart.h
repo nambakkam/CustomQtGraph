@@ -10,8 +10,10 @@
 class Linechart : public QQuickPaintedItem
 {
     Q_OBJECT
-
-
+    QML_WRITABLE_VAR_PROPERTY(QVector<qreal>,xTicks)
+    QML_WRITABLE_VAR_PROPERTY(QVector<qreal>,yTicks)
+    QML_WRITABLE_VAR_PROPERTY(qreal,gridWidth)
+    QML_WRITABLE_VAR_PROPERTY(qreal,gridHeight)
 
 public:
     Linechart(QQuickPaintedItem *parent = 0);

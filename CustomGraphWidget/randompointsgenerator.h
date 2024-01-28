@@ -13,7 +13,8 @@ class RandomPointsGenerator : public QObject
 
 public:
     explicit RandomPointsGenerator(QObject *parent = nullptr);
-    QVector<QPointF> points;
+    QVector<qreal>pointsX;
+    QVector<qreal> pointsY;
 
 public slots:
     void generateRandompoint();

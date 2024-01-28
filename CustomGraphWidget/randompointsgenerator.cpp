@@ -8,25 +8,24 @@ RandomPointsGenerator::RandomPointsGenerator(QObject *parent)
 {
     time = 0;
     pointsTimer = new QTimer;
-    pointsTimer->setInterval(5);
+    pointsTimer->setInterval(20);
     QObject::connect(pointsTimer,&QTimer::timeout,this,&RandomPointsGenerator::generateRandompoint);
     pointsTimer->start();
 }
 
 void RandomPointsGenerator::generateRandompoint(){
-    if(points.size()<=200){
+    if(pointsY.size()<=200){
         time = time + 0.02;
         qreal x_value = time*100;
         qreal y_value = getRand(0,230);
-
-        points.append(QPointF(x_value,y_value));
+        pointsX.append(x_value);
+        pointsY.append(y_value);
 
     }
     else{
-        qreal x_value = time*100;
         qreal y_value = getRand(0,230);
-        points.pop_front();
-        points.push_back(QPointF(x_value,y_value));
+        pointsY.pop_front();
+        pointsY.push_back(y_value);
     }
     emit pointsAdded();
 
