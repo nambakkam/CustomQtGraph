@@ -9,7 +9,6 @@ RandomCustomGraph is a Qt application developed in C++ and QML that reads values
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 
