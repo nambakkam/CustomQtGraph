@@ -13,33 +13,43 @@ void Linechart::paint(QPainter *painter) {
   // Round the width() and height() to nearest 20 multiple
   setWidth(static_cast<int>(width() / 200) * 200);
   setHeight(static_cast<int>(height() / 200) * 200);
-  setAntialiasing(true);
-  painter->setRenderHint(QPainter::Antialiasing, true);
   QLineF yAxis(0, 0, 0, height());
   QLineF xAxis(0, height(), width(), height());
-
-  drawMinorGrid(painter);
   drawGrid(painter);
   painter->setPen(QPen(QColor("black"), 2, Qt::SolidLine));
   painter->setBrush(QColor("transparent"));
   painter->drawLine(yAxis);
   painter->drawLine(xAxis);
-  writeXandYticks(painter);
+
+  //  qreal xConst =
+  //      generator.getMaxX() == 0 ? 1 / width() : generator.getMaxX() /
+  //      width();
+  qreal yBuff = 0.75;
+  qreal xConst = 400 / width();
+  qreal yConst =
+      (generator.getMaxY() - generator.getMinY()) == 0
+          ? 1 / (height())
+          : (generator.getMaxY() - generator.getMinY()) / (height() * yBuff);
 
   for (int i = 0; i < generator.pointsY.size(); i++) {
     if (i > 0) {
       painter->setPen(QPen(QColor("red"), 2, Qt::SolidLine));
       painter->setBrush(QColor("transparent"));
-      painter->drawLine((generator.pointsX.at(i)) / 400 * width(),
-                        height() - generator.pointsY.at(i) / 240 * height(),
-                        (generator.pointsX.at(i - 1)) / 400 * width(),
-                        height() -
-                            generator.pointsY.at(i - 1) / 240 * height());
+      qreal xScaled = generator.pointsX.at(i) / xConst;
+      qreal yScaled =
+          height() * (1 - yBuff) / 2 +
+          (generator.getMaxY() - generator.pointsY.at(i)) / (yConst);
+      qreal xScaledPrev = generator.pointsX.at(i - 1) / xConst;
+      qreal yScaledPrev =
+          height() * (1 - yBuff) / 2 +
+          (generator.getMaxY() - generator.pointsY.at(i - 1)) / (yConst);
+      painter->drawLine(xScaled, yScaled, xScaledPrev, yScaledPrev);
     }
     painter->setPen(QPen(QColor("blue"), 7.5, Qt::SolidLine));
     painter->setBrush(QColor("blue"));
-    qreal xScaled = (generator.pointsX.at(i)) / 400 * width();
-    qreal yScaled = height() - generator.pointsY.at(i) / 240 * height();
+    qreal xScaled = (generator.pointsX.at(i)) / xConst;
+    qreal yScaled = height() * (1 - yBuff) / 2 +
+                    (generator.getMaxY() - generator.pointsY.at(i)) / (yConst);
     painter->drawPoint(QPointF(xScaled, yScaled));
   }
 }
@@ -71,25 +81,5 @@ void Linechart::drawMinorGrid(QPainter *painter) {
       gridRect.setRect(i, j, dimension, dimension);
       painter->drawRect(gridRect);
     }
-  }
-}
-void Linechart::writeXandYticks(QPainter *painter) {
-  QFont textFont;
-  textFont.setPixelSize(0.02 * width());
-  textFont.setFamily("ROBOTO");
-  textFont.setStyleName("Medium");
-
-  painter->setPen(QPen(QColor("black"), 2, Qt::SolidLine));
-  painter->setBrush(QColor("black"));
-  painter->setFont(textFont);
-
-  for (int i = 0; i <= width(); i += width() / 20) {
-    m_xTicks.append(i);
-    painter->drawText(QPointF(i, 1.1 * height()), QString::number(i));
-  }
-  for (int j = 0; j <= height(); j += height() / 20) {
-    painter->drawText(QPointF(-0.1 * width(), height() - j),
-                      QString::number(j));
-    m_yTicks.append(j);
   }
 }
